@@ -2,9 +2,7 @@ import fileinput
 import sys
 
 class Formatter:
-    #class can and should have instance variables
     
-
     def __init__(self, inputfile, inputLines):
 
         self.formatKeys = {".LW": 0, ".LM": 0, ".LS": 0, ".FT": "off"}
@@ -96,7 +94,7 @@ class Formatter:
 
     def check_newline(self,l, llwnl):
 
-        if l == '\n':
+        if l == '\n' and self.formatKeys[".FT"] == "on":
             if llwnl: #If the last line was a newline, we only want to print out one line
                 self.lines.append('')
                 return True
@@ -121,13 +119,12 @@ class Formatter:
 
             with open(self.filename) as self.file:
                 for line in self.file:
-                    #print(line)
                     idx+=1
                     lineList.append(line)
 
                 self.filelen = idx
-                #print(idx)
             return lineList
+
         except FileNotFoundError:
             print("File not found")
             sys.exit(0)
@@ -171,11 +168,8 @@ class Formatter:
             return firstWord #return the truth value of first word, incase the last word processed of the line exactly matched the charcount 
 
         else: #if formatting is off, concat the raw lines to the lines list
-            if l != '\n':
-                l = l.strip('\n')
-                self.lines.append(l)
-
-        
+            l = l.strip('\n')
+            self.lines.append(l)
 
     def new_para_formatter(self): #for pre-emptively applying line margin to new paragraph lines, or else formatting will be applied out of sequence
         if self.formatKeys[".FT"] == "on":
