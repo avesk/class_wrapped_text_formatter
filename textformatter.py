@@ -17,17 +17,24 @@ class Formatter:
 
     def read_file(self):
         filelines = self.set_file_len()
+        idx = 0
+        extraNewline = False
         newPara = False
         firstWord = False
+
         for line in filelines:#self.file:
-            #print(line, end='')       
-            if self.check_newline(line): # appends an empty string to the the line (the driver will print the newline). If true continues to the next iteration
+            idx +=1
+            #print(line, end='') 
+            if idx == self.filelen and line == '\n':
+                extraNewline = True
+                break;      
+            if self.check_newline(line) and (idx != self.filelen): # appends an empty string to the the line (the driver will print the newline). If true continues to the next iteration
                 newPara = True
                 continue
             cmd = self.get_args(line)
             if cmd != '0': 
-                newPara = True
                 self.set_args(line, cmd)
+                newPara = True
                 continue
             if newPara and self.formatKeys[".FT"] == "on":
                 #print("I SHOULDNT BE IN HERE")
@@ -37,9 +44,13 @@ class Formatter:
                 
             firstWord = self.inParaFormatter(line, firstWord)
 
-        if self.formatKeys[".FT"] == "on":
+
+        if self.formatKeys[".FT"] == "on": 
             self.lines.append(self.currentLine)
-       
+
+        if extraNewline:
+            self.lines.append('')
+    
     def get_lines(self):
         #returns formatted lines
         return self.lines
@@ -84,8 +95,8 @@ class Formatter:
             self.currentLine += '' #add a blank element to the currentline
             self.lines.append(self.currentLine) #add the blank element to the line list
             self.ls_printer()
+            self.ls_printer()
 
-            #self.lines.append("FOUND A LINE THATS JUST A NEWLINE!!!!")
             return True
 
         else:
@@ -103,7 +114,7 @@ class Formatter:
                     lineList.append(line)
 
                 self.filelen = idx
-
+                #print(idx)
             return lineList
         except FileNotFoundError:
             print("File not found")
@@ -151,15 +162,18 @@ class Formatter:
             return firstWord  
 
         else:
-            l = l.strip('\n')
-            self.lines.append(l)
+            if l != '\n':
+                l = l.strip('\n')
+                self.lines.append(l)
 
         
 
     def new_para_formatter(self):
-        self.lm_printer()
-        self.ls_printer()
-        self.charCount += self.formatKeys[".LM"]
+        if self.formatKeys[".FT"] == "on":
+            self.lm_printer()
+            #self.ls_printer()
+            self.charCount += self.formatKeys[".LM"]
+            
         return 0
 
     def lm_printer(self): 
