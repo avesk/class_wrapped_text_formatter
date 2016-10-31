@@ -1,0 +1,12 @@
+#!/bin/bash
+#Test script
+
+BIN="./textdriver.py"
+DIFFBIN=/usr/bin/diff
+TESTDIR=/Users/averykushner/UVIC/SENG_265/assign3/zastre_tests
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
+do
+        echo $i
+        $BIN $TESTDIR/in$i.txt | $DIFFBIN $TESTDIR/out$i.txt -
+done
+
